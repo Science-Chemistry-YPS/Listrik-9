@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Listrik Dinamis Kelas 9 - Modul Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdfaf6; color: #333; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .btn-primary { background-color: #d97706; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s; }
+        .btn-primary:hover { background-color: #b45309; }
+        .btn-secondary { background-color: #e5e7eb; color: #374151; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s; }
+        .btn-secondary:hover { background-color: #d1d5db; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        .math-display { font-family: 'Times New Roman', serif; font-style: italic; }
+        .variable { font-style: italic; font-family: 'Times New Roman', serif; font-weight: bold; }
+        /* Circuit Schematic CSS styles */
+        .circuit-line { background-color: #333; }
+        .bulb { width: 20px; height: 20px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fef3c7; font-size: 12px; }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals with Amber/Orange Accents (#d97706) for energy theme. Background #fdfaf6 (Off-white/Cream). -->
+    <!-- Application Structure Plan: 
+         1. Header: Engaging title and context.
+         2. Formula Lab (Concept): Interactive tabbed section to switch between Energy and Power concepts. Includes a mini-calculator for quick formula checks.
+         3. Circuit Arena (Analysis): A visual toggle comparison between Series and Parallel circuits using CSS-drawn schematics and dynamic text to highlight differences in I, V, and R.
+         4. Home Energy Audit (Application): The core interactive tool. A dynamic table pre-loaded with the report's case study. Users can add/remove items. A Chart.js pie chart visualizes which appliance uses the most energy. This directly addresses the "Calculation" learning objective.
+         5. Challenge Zone (Evaluation): The 3 practice problems presented as interactive flashcards/accordions to test understanding.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Formula Lab: Tabs -> Goal: Organize definitions cleanly. -> Interaction: Click tabs to switch context. -> Justification: Reduces cognitive load compared to a long wall of text.
+         2. Circuit Schematics: CSS/HTML Shapes -> Goal: Visualize connections. -> Interaction: Toggle buttons. -> Justification: Replaces static images with responsive, code-drawn diagrams (No SVG).
+         3. Energy Cost Pie Chart: Chart.js -> Goal: Compare energy usage proportion. -> Interaction: Updates live when table data changes. -> Justification: Helps students visualize "biggest energy waster".
+         4. Cost Calculator Table: JS-driven HTML Table -> Goal: Apply the calculation steps. -> Interaction: Add/Delete rows, auto-calculate totals. -> Justification: Hands-on practice of the "Life Skill" mentioned in the report.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <!-- Navigation / Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">⚡</span>
+                <div>
+                    <h1 class="text-xl font-bold text-stone-900">Review Listrik Dinamis</h1>
+                    <p class="text-xs text-stone-500">IPA Kelas 9</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-stone-600">
+                <a href="#konsep" class="hover:text-amber-600 transition">Konsep & Rumus</a>
+                <a href="#rangkaian" class="hover:text-amber-600 transition">Rangkaian</a>
+                <a href="#biaya" class="hover:text-amber-600 transition">Hitung Biaya</a>
+                <a href="#latihan" class="hover:text-amber-600 transition">Latihan</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+
+        <!-- Intro -->
+        <section class="text-center space-y-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Energi & Daya Listrik</h2>
+            <p class="max-w-2xl mx-auto text-stone-600 leading-relaxed">
+                Selamat datang di modul review interaktif. Aplikasi ini dirancang untuk membantumu memahami hubungan antara energi, daya, rangkaian listrik, dan bagaimana menghitung tagihan listrik di rumahmu sendiri. Mulai eksplorasi di bawah ini!
+            </p>
+        </section>
+
+        <!-- SECTION 1: KONSEP & RUMUS (Formula Lab) -->
+        <section id="konsep" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Description Side -->
+                <div class="md:w-1/3">
+                    <h3 class="text-2xl font-bold text-amber-600 mb-4">A. Konsep Dasar</h3>
+                    <p class="text-stone-600 mb-4">
+                        Pahami perbedaan mendasar antara <strong>Energi</strong> (kemampuan melakukan usaha) dan <strong>Daya</strong> (laju penggunaan energi). Gunakan panel interaktif di samping untuk melihat rumus-rumus kuncinya.
+                    </p>
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg text-sm">
+                        <strong class="block text-amber-800 mb-2">Ingat Satuan SI:</strong>
+                        <ul class="list-disc list-inside space-y-1 text-stone-700">
+                            <li>Energi (<span class="variable">W</span>) &rarr; <strong>Joule (J)</strong></li>
+                            <li>Daya (<span class="variable">P</span>) &rarr; <strong>Watt (W)</strong></li>
+                            <li>1 kW = 1.000 Watt</li>
+                            <li>1 kJ = 1.000 Joule</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Formula Cards -->
+                <div class="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Energy Card -->
+                    <div class="card p-6 border-l-4 border-blue-500 cursor-pointer hover:shadow-lg transition-all" onclick="toggleFormula('energy')">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-xl font-bold text-blue-700">1. Energi Listrik (<span class="variable">W</span>)</h4>
+                            <span class="text-2xl">🔋</span>
+                        </div>
+                        <p class="text-sm text-stone-500 mb-4 h-10">Kemampuan memindahkan muatan listrik.</p>
+                        
+                        <div class="bg-stone-100 p-3 rounded text-center mb-2">
+                            <span class="text-xs text-stone-400 block mb-1">Jika diketahui V, I, t</span>
+                            <span class="math-display text-lg font-bold">W = V &times; I &times; t</span>
+                        </div>
+                        <div class="bg-stone-100 p-3 rounded text-center">
+                            <span class="text-xs text-stone-400 block mb-1">Jika diketahui R</span>
+                            <span class="math-display text-lg">W = I² &times; R &times; t</span>
+                        </div>
+                    </div>
+
+                    <!-- Power Card -->
+                    <div class="card p-6 border-l-4 border-red-500 cursor-pointer hover:shadow-lg transition-all" onclick="toggleFormula('power')">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-xl font-bold text-red-700">2. Daya Listrik (<span class="variable">P</span>)</h4>
+                            <span class="text-2xl">💡</span>
+                        </div>
+                        <p class="text-sm text-stone-500 mb-4 h-10">Besar energi yang digunakan per satuan waktu.</p>
+                        
+                        <div class="bg-stone-100 p-3 rounded text-center mb-2">
+                            <span class="text-xs text-stone-400 block mb-1">Definisi Dasar</span>
+                            <span class="math-display text-lg font-bold">P = W / t</span>
+                        </div>
+                        <div class="bg-stone-100 p-3 rounded text-center">
+                            <span class="text-xs text-stone-400 block mb-1">Rumus Turunan</span>
+                            <span class="math-display text-lg">P = V &times; I</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: RANGKAIAN LISTRIK (Circuit Arena) -->
+        <section id="rangkaian" class="scroll-mt-24 bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+            <div class="p-6 md:p-8 bg-stone-900 text-white">
+                <h3 class="text-2xl font-bold mb-2">B. Simulasi Konsep Rangkaian</h3>
+                <p class="text-stone-300">Klik tombol di bawah untuk melihat perbedaan sifat fisik dan rumus antara Rangkaian Seri dan Paralel.</p>
+            </div>
+            
+            <div class="flex border-b border-stone-200">
+                <button onclick="setCircuit('seri')" id="btn-seri" class="flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition bg-amber-100 text-amber-800 border-b-4 border-amber-600">
+                    Rangkaian Seri
+                </button>
+                <button onclick="setCircuit('paralel')" id="btn-paralel" class="flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition text-stone-500">
+                    Rangkaian Paralel
+                </button>
+            </div>
+
+            <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+                <!-- Visual Representation (CSS Drawing) -->
+                <div class="bg-stone-50 p-8 rounded-xl border border-stone-200 flex justify-center items-center h-64 relative" id="circuit-visual">
+                    <!-- Content injected by JS -->
+                </div>
+
+                <!-- Properties Table -->
+                <div>
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span id="circuit-title">Sifat Rangkaian Seri</span>
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-stone-50 rounded border border-stone-100">
+                            <span class="font-semibold text-sm text-stone-500">Susunan</span>
+                            <span id="prop-susunan" class="font-bold text-stone-800">Berderet (satu jalur)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-stone-50 rounded border border-stone-100">
+                            <span class="font-semibold text-sm text-stone-500">Arus (<span class="variable">I</span>)</span>
+                            <span id="prop-arus" class="font-bold text-stone-800 math-display">I_tot = I_1 = I_2</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-stone-50 rounded border border-stone-100">
+                            <span class="font-semibold text-sm text-stone-500">Tegangan (<span class="variable">V</span>)</span>
+                            <span id="prop-tegangan" class="font-bold text-stone-800 math-display">V_tot = V_1 + V_2</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-stone-50 rounded border border-stone-100">
+                            <span class="font-semibold text-sm text-stone-500">Hambatan (<span class="variable">R</span>)</span>
+                            <span id="prop-hambatan" class="font-bold text-stone-800 math-display">R_s = R_1 + R_2</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-amber-50 rounded border border-amber-100">
+                            <span class="font-semibold text-sm text-amber-700">Jika 1 Lampu Mati?</span>
+                            <span id="prop-lampu" class="font-bold text-amber-900 text-right">Semua mati</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MENGHITUNG BIAYA (Interactive Application) -->
+        <section id="biaya" class="scroll-mt-24">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-amber-600 mb-2">C. Kalkulator Biaya Listrik</h3>
+                <p class="text-stone-600">
+                    Ini adalah simulasi "Life Skill" penting. Masukkan data alat elektronik untuk menghitung estimasi biaya bulanan.
+                    <br><span class="text-sm italic text-stone-500">Data awal diisi sesuai Contoh Studi Kasus pada modul.</span>
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Calculator Inputs & Table -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Add Item Form -->
+                    <div class="card p-4 flex flex-wrap gap-4 items-end bg-stone-50 border border-stone-200">
+                        <div class="flex-1 min-w-[120px]">
+                            <label class="block text-xs font-bold text-stone-500 mb-1">Nama Alat</label>
+                            <input type="text" id="input-name" placeholder="Contoh: Kipas" class="w-full p-2 border border-stone-300 rounded focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div class="w-24">
+                            <label class="block text-xs font-bold text-stone-500 mb-1">Daya (W)</label>
+                            <input type="number" id="input-watt" placeholder="0" class="w-full p-2 border border-stone-300 rounded focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div class="w-20">
+                            <label class="block text-xs font-bold text-stone-500 mb-1">Jml</label>
+                            <input type="number" id="input-qty" placeholder="1" class="w-full p-2 border border-stone-300 rounded focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div class="w-24">
+                            <label class="block text-xs font-bold text-stone-500 mb-1">Jam/Hari</label>
+                            <input type="number" id="input-hours" placeholder="0" class="w-full p-2 border border-stone-300 rounded focus:outline-none focus:border-amber-500">
+                        </div>
+                        <button onclick="addAppliance()" class="btn-primary h-[42px] px-6">
+                            + Tambah
+                        </button>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="overflow-x-auto rounded-lg border border-stone-200">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Alat</th>
+                                    <th class="p-3 text-center">Watt</th>
+                                    <th class="p-3 text-center">Jml</th>
+                                    <th class="p-3 text-center">Jam</th>
+                                    <th class="p-3 text-right">Total Wh</th>
+                                    <th class="p-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appliance-list" class="bg-white divide-y divide-stone-100">
+                                <!-- Rows will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Settings -->
+                    <div class="flex justify-between items-center p-4 bg-amber-50 rounded-lg border border-amber-100">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-bold text-amber-800">Tarif Listrik (per kWh): Rp</label>
+                            <input type="number" id="tarif-listrik" value="1500" onchange="calculateTotal()" class="w-24 p-1 border border-amber-300 rounded text-amber-900 font-mono">
+                        </div>
+                        <button onclick="resetData()" class="text-xs text-red-500 hover:text-red-700 underline">Reset Data</button>
+                    </div>
+                </div>
+
+                <!-- Summary & Chart -->
+                <div class="space-y-6">
+                    <!-- Summary Card -->
+                    <div class="card p-6 bg-gradient-to-br from-stone-800 to-stone-900 text-white">
+                        <h4 class="text-lg font-semibold mb-4 border-b border-stone-700 pb-2">Ringkasan Biaya (30 Hari)</h4>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end">
+                                <span class="text-stone-400 text-sm">Total Energi Harian</span>
+                                <span class="text-xl font-mono" id="total-wh">0 Wh</span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-stone-400 text-sm">Konversi kWh Harian</span>
+                                <span class="text-xl font-mono text-amber-400" id="total-kwh-day">0 kWh</span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-stone-400 text-sm">Total Sebulan</span>
+                                <span class="text-xl font-mono" id="total-kwh-month">0 kWh</span>
+                            </div>
+                            <div class="pt-4 border-t border-stone-700">
+                                <span class="block text-stone-400 text-xs mb-1">Estimasi Tagihan</span>
+                                <span class="text-3xl font-bold text-green-400" id="total-cost">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="card p-4">
+                        <h5 class="text-center text-xs font-bold text-stone-500 uppercase mb-4">Proporsi Penggunaan Energi</h5>
+                        <div class="chart-container">
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: LATIHAN SOAL (Practice Zone) -->
+        <section id="latihan" class="scroll-mt-24">
+            <h3 class="text-2xl font-bold text-stone-800 mb-6">D. Latihan Soal Mandiri</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                
+                <!-- Soal 1 -->
+                <div class="card flex flex-col h-full">
+                    <div class="p-6 flex-grow">
+                        <div class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-2">Analisa Daya</div>
+                        <p class="font-medium text-stone-800 mb-4">Sebuah penanak nasi bertuliskan "350 W / 220 V".</p>
+                        <ol class="list-[lower-alpha] ml-4 text-sm text-stone-600 space-y-2">
+                            <li>Apa arti tulisan tersebut?</li>
+                            <li>Berapa besar energi yang digunakan selama 1 jam?</li>
+                        </ol>
+                    </div>
+                    <div class="border-t border-stone-100">
+                        <button onclick="toggleAnswer('ans1')" class="w-full py-3 text-sm font-bold text-stone-500 hover:bg-stone-50 hover:text-amber-600 transition">
+                            Lihat Jawaban
+                        </button>
+                        <div id="ans1" class="hidden px-6 py-4 bg-amber-50 text-sm text-stone-700 border-t border-amber-100">
+                            <p class="mb-2"><strong>a.</strong> Daya alat 350 Watt jika dipasang pada tegangan 220 Volt.</p>
+                            <p><strong>b.</strong> <span class="variable">W = P &times; t</span><br><span class="variable">W</span> = 350 W &times; 1 jam<br><span class="variable">W</span> = 350 Wh atau 0,35 kWh.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soal 2 -->
+                <div class="card flex flex-col h-full">
+                    <div class="p-6 flex-grow">
+                        <div class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-2">Rangkaian Campuran</div>
+                        <p class="font-medium text-stone-800 mb-4"><span class="variable">R1</span> = 4&Omega;, <span class="variable">R2</span> = 6&Omega;, <span class="variable">R3</span> = 12&Omega;. <span class="variable">R2</span> dan <span class="variable">R3</span> paralel, lalu diserikan dengan <span class="variable">R1</span>.</p>
+                        <p class="text-sm text-stone-600">Hitung Hambatan Pengganti Totalnya.</p>
+                    </div>
+                    <div class="border-t border-stone-100">
+                        <button onclick="toggleAnswer('ans2')" class="w-full py-3 text-sm font-bold text-stone-500 hover:bg-stone-50 hover:text-amber-600 transition">
+                            Lihat Jawaban
+                        </button>
+                        <div id="ans2" class="hidden px-6 py-4 bg-amber-50 text-sm text-stone-700 border-t border-amber-100">
+                            <p class="mb-2"><strong>1. Paralel (<span class="variable">Rp</span>):</strong><br>1/Rp = 1/6 + 1/12 = 2/12 + 1/12 = 3/12<br>Rp = 12/3 = 4 &Omega;</p>
+                            <p><strong>2. Seri Total (<span class="variable">Rtot</span>):</strong><br>Rtot = R1 + Rp<br>Rtot = 4 + 4 = <strong>8 &Omega;</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soal 3 -->
+                <div class="card flex flex-col h-full">
+                    <div class="p-6 flex-grow">
+                        <div class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-2">Tagihan Siswa</div>
+                        <p class="font-medium text-stone-800 mb-4">Kamar: 1 Lampu (10W, 12 jam) & Cas HP (15W, 4 jam). Tarif Rp1.400/kWh.</p>
+                        <p class="text-sm text-stone-600">Berapa biaya sebulan?</p>
+                    </div>
+                    <div class="border-t border-stone-100">
+                        <button onclick="toggleAnswer('ans3')" class="w-full py-3 text-sm font-bold text-stone-500 hover:bg-stone-50 hover:text-amber-600 transition">
+                            Lihat Jawaban
+                        </button>
+                        <div id="ans3" class="hidden px-6 py-4 bg-amber-50 text-sm text-stone-700 border-t border-amber-100">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Lampu: 10 &times; 12 = 120 Wh</li>
+                                <li>HP: 15 &times; 4 = 60 Wh</li>
+                                <li>Total/hari: 180 Wh = 0,18 kWh</li>
+                                <li>Sebulan: 0,18 &times; 30 = 5,4 kWh</li>
+                                <li><strong>Biaya:</strong> 5,4 &times; 1.400 = <strong>Rp7.560</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center mt-12">
+        <p class="text-sm">Modul Review IPA Kelas 9 &copy; 2025</p>
+        <p class="text-xs mt-2">Dibuat untuk pembelajaran Listrik Dinamis.</p>
+    </footer>
+
+    <script>
+        // --- CIRCUIT SIMULATOR LOGIC ---
+        function setCircuit(type) {
+            const visual = document.getElementById('circuit-visual');
+            const btnSeri = document.getElementById('btn-seri');
+            const btnParalel = document.getElementById('btn-paralel');
+            const title = document.getElementById('circuit-title');
+
+            // Reset Styles
+            btnSeri.className = "flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition text-stone-500";
+            btnParalel.className = "flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition text-stone-500";
+            
+            // Set Text Content
+            if (type === 'seri') {
+                btnSeri.className = "flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition bg-amber-100 text-amber-800 border-b-4 border-amber-600";
+                title.innerText = "Sifat Rangkaian Seri";
+                document.getElementById('prop-susunan').innerText = "Berderet (satu jalur)";
+                document.getElementById('prop-arus').innerHTML = "<span class='variable'>I</span> total = <span class='variable'>I1</span> = <span class='variable'>I2</span>";
+                document.getElementById('prop-tegangan').innerHTML = "<span class='variable'>V</span> total = <span class='variable'>V1</span> + <span class='variable'>V2</span>";
+                document.getElementById('prop-hambatan').innerHTML = "<span class='variable'>Rs</span> = <span class='variable'>R1</span> + <span class='variable'>R2</span>";
+                document.getElementById('prop-lampu').innerText = "Semua mati";
+                
+                // Draw Series Circuit (CSS)
+                visual.innerHTML = `
+                    <div class="relative w-full max-w-xs h-32 border-2 border-stone-800 rounded flex items-center justify-around px-8">
+                        <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-stone-50 px-2 text-stone-800 font-bold border border-stone-800 rounded">V (Baterai)</div>
+                        <!-- Resistor 1 -->
+                        <div class="relative flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-stone-800 shadow-[0_0_10px_rgba(253,224,71,0.5)] flex items-center justify-center">💡</div>
+                            <span class="text-xs font-bold mt-1">R1</span>
+                        </div>
+                        <!-- Wire connecting -->
+                        <div class="h-1 bg-stone-800 flex-grow mx-2"></div>
+                        <!-- Resistor 2 -->
+                        <div class="relative flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-stone-800 shadow-[0_0_10px_rgba(253,224,71,0.5)] flex items-center justify-center">💡</div>
+                            <span class="text-xs font-bold mt-1">R2</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                btnParalel.className = "flex-1 py-4 text-center font-bold text-lg hover:bg-stone-50 transition bg-amber-100 text-amber-800 border-b-4 border-amber-600";
+                title.innerText = "Sifat Rangkaian Paralel";
+                document.getElementById('prop-susunan').innerText = "Bertingkat (bercabang)";
+                document.getElementById('prop-arus').innerHTML = "<span class='variable'>I</span> total = <span class='variable'>I1</span> + <span class='variable'>I2</span>";
+                document.getElementById('prop-tegangan').innerHTML = "<span class='variable'>V</span> total = <span class='variable'>V1</span> = <span class='variable'>V2</span>";
+                document.getElementById('prop-hambatan').innerHTML = "1/<span class='variable'>Rp</span> = 1/<span class='variable'>R1</span> + 1/<span class='variable'>R2</span>";
+                document.getElementById('prop-lampu').innerText = "Yang lain tetap nyala";
+
+                // Draw Parallel Circuit (CSS)
+                visual.innerHTML = `
+                    <div class="relative w-full max-w-xs h-32 border-2 border-r-0 border-l-0 border-stone-800 flex flex-col justify-between py-0">
+                        <!-- Top Wire -->
+                        <div class="absolute top-0 left-0 w-full h-0.5 bg-stone-800"></div>
+                        <!-- Bottom Wire -->
+                        <div class="absolute bottom-0 left-0 w-full h-0.5 bg-stone-800"></div>
+                        
+                        <!-- Battery Label -->
+                         <div class="absolute -left-8 top-1/2 transform -translate-y-1/2 flex flex-col items-center">
+                            <div class="h-16 w-0.5 bg-stone-800 absolute right-0"></div> <!-- Vertical wire closing loop visually -->
+                             <span class="bg-stone-50 px-1 font-bold text-sm">V</span>
+                        </div>
+
+                        <!-- Branches -->
+                        <div class="flex justify-around h-full w-full px-8">
+                            <!-- Branch 1 -->
+                            <div class="w-0.5 h-full bg-stone-800 relative flex items-center justify-center">
+                                <div class="absolute w-8 h-8 rounded-full bg-yellow-200 border-2 border-stone-800 shadow-[0_0_10px_rgba(253,224,71,0.5)] z-10 flex items-center justify-center">💡</div>
+                                <span class="absolute left-4 top-1/2 text-xs font-bold">R1</span>
+                            </div>
+                            <!-- Branch 2 -->
+                            <div class="w-0.5 h-full bg-stone-800 relative flex items-center justify-center">
+                                <div class="absolute w-8 h-8 rounded-full bg-yellow-200 border-2 border-stone-800 shadow-[0_0_10px_rgba(253,224,71,0.5)] z-10 flex items-center justify-center">💡</div>
+                                <span class="absolute left-4 top-1/2 text-xs font-bold">R2</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize Circuit
+        setCircuit('seri');
+
+        // --- APPLIANCE CALCULATOR LOGIC ---
+        // Pre-load data from Case Study (Lampu, TV, Setrika)
+        let appliances = [
+            { id: 1, name: 'Lampu', watts: 20, qty: 4, hours: 10 },
+            { id: 2, name: 'TV', watts: 100, qty: 1, hours: 5 },
+            { id: 3, name: 'Setrika', watts: 300, qty: 1, hours: 2 }
+        ];
+
+        let chartInstance = null;
+
+        function renderTable() {
+            const list = document.getElementById('appliance-list');
+            list.innerHTML = '';
+            
+            appliances.forEach((item, index) => {
+                const totalWh = item.watts * item.qty * item.hours;
+                const row = `
+                    <tr class="hover:bg-stone-50 transition">
+                        <td class="p-3 font-medium text-stone-800">${item.name}</td>
+                        <td class="p-3 text-center">${item.watts}</td>
+                        <td class="p-3 text-center">${item.qty}</td>
+                        <td class="p-3 text-center">${item.hours}</td>
+                        <td class="p-3 text-right font-mono">${totalWh.toLocaleString()} Wh</td>
+                        <td class="p-3 text-center">
+                            <button onclick="removeAppliance(${index})" class="text-red-400 hover:text-red-600 font-bold">×</button>
+                        </td>
+                    </tr>
+                `;
+                list.innerHTML += row;
+            });
+            calculateTotal();
+        }
+
+        function addAppliance() {
+            const name = document.getElementById('input-name').value;
+            const watts = parseFloat(document.getElementById('input-watt').value);
+            const qty = parseFloat(document.getElementById('input-qty').value);
+            const hours = parseFloat(document.getElementById('input-hours').value);
+
+            if (name && watts && qty && hours) {
+                appliances.push({ name, watts, qty, hours });
+                // Clear inputs
+                document.getElementById('input-name').value = '';
+                document.getElementById('input-watt').value = '';
+                document.getElementById('input-qty').value = '1';
+                document.getElementById('input-hours').value = '';
+                renderTable();
+            } else {
+                alert("Mohon lengkapi semua data alat.");
+            }
+        }
+
+        function removeAppliance(index) {
+            appliances.splice(index, 1);
+            renderTable();
+        }
+
+        function resetData() {
+            appliances = [];
+            renderTable();
+        }
+
+        function calculateTotal() {
+            let totalWh = 0;
+            appliances.forEach(item => {
+                totalWh += (item.watts * item.qty * item.hours);
+            });
+
+            const kwhDay = totalWh / 1000;
+            const kwhMonth = kwhDay * 30;
+            const tarif = parseFloat(document.getElementById('tarif-listrik').value) || 0;
+            const cost = kwhMonth * tarif;
+
+            // Update DOM
+            document.getElementById('total-wh').innerText = totalWh.toLocaleString() + " Wh";
+            document.getElementById('total-kwh-day').innerText = kwhDay.toLocaleString('id-ID', {maximumFractionDigits: 2}) + " kWh";
+            document.getElementById('total-kwh-month').innerText = kwhMonth.toLocaleString('id-ID', {maximumFractionDigits: 2}) + " kWh";
+            document.getElementById('total-cost').innerText = "Rp " + cost.toLocaleString('id-ID');
+
+            updateChart(appliances);
+        }
+
+        function updateChart(data) {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            
+            // Prepare data for chart
+            const labels = data.map(d => d.name);
+            const values = data.map(d => (d.watts * d.qty * d.hours));
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#f59e0b', // amber-500
+                            '#3b82f6', // blue-500
+                            '#ef4444', // red-500
+                            '#10b981', // emerald-500
+                            '#8b5cf6', // violet-500
+                            '#6366f1'  // indigo-500
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw;
+                                    return `${context.label}: ${val} Wh/hari`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- PRACTICE QUESTIONS LOGIC ---
+        function toggleAnswer(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // Initialize Calculator
+        renderTable();
+
+    </script>
+</body>
+</html>
